@@ -1,0 +1,13 @@
+home_assignment:
+  outputs:
+    dev:
+      type: snowflake
+      threads: 4
+      account: <your_account>
+      database: home_assignment
+      user: <your_username>
+      password: <your_password>
+      schema: public
+      warehouse: compute_wh
+      role: public
+  target: dev
