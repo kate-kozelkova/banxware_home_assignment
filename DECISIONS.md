@@ -26,6 +26,8 @@ We transform raw_sales_data with the following query:
 
 We choose all the columns from raw_sales_data, calculate a new one 'total_sales' by multiplying values from 'quantity' and 'price', and also split 'order_date' into 'order_day', 'order_month', and 'order_day' by extracting corresponding date attributes. We save the output as a new table in our public schema of the home_assignment database.
 
+To be on the safe side, we still keep order_date in case we need it later for cases where using one column would be faster than using 'order_day', 'order_month', 'order_year'. In any other circumstances, we would drop the order_date column after transformation. The same applies to 'quantity' and 'price'.
+
 ## 4. SQL queries & Output
 
 ### Answering the questions with SQL queries
@@ -34,11 +36,11 @@ We choose all the columns from raw_sales_data, calculate a new one 'total_sales'
 
 | PRODUCT_NAME | TOTAL_SALES |
 |--------------|-------------|
-| Product_3001 | 872.28      |
-| Product_3008 | 757.60      |
-| Product_3001 | 757.36      |
-| Product_3003 | 699.04      |
-| Product_3008 | 657.86      |
+| Product_3001 | 4935.1      |
+| Product_3003 | 3808.4      |
+| Product_3002 | 3044.74     | 
+| Product_3004 | 2994.59     |
+| Product_3008 | 2959.8      |
 
 SQL query:
 ```sql
@@ -49,7 +51,7 @@ SQL query:
     ORDER BY total_sales DESC;
 ```
 
-We return names and sales amount of top 5 products in the descending order based on their total sales in 2023 using data from transformed_sales_data and by summarising sales based on the product name.
+We return the names and sales amounts of the top 5 products in descending order based on their total sales for 2023 by using data from transformed_sales_data, with sales summarized by product_name.
 
 *2. What are the names of the top 5 customers by total sales amount in the year 2023?*
 
@@ -62,7 +64,7 @@ We return names and sales amount of top 5 products in the descending order based
 | miTbp86xy6	| 957.79      |
 
 ```sql
-    SUM(transformed_sales_data.total_sales) AS total_sales 
+    SELECT TOP 5 raw_customer_data.name AS customer_name, SUM(transformed_sales_data.total_sales) AS total_sales
     FROM transformed_sales_data
     INNER JOIN raw_customer_data ON transformed_sales_data.customer_id = raw_customer_data.id
     WHERE order_year = '2023'
@@ -70,7 +72,7 @@ We return names and sales amount of top 5 products in the descending order based
     ORDER BY total_sales DESC;
 ```
 
-We return names and sales amount of top 5 customers with the highest purchase volume, based on their total purchases in 2023 by joining raw_customer_data and transformed_sales_data on customer ID.
+We return the names and total purchase amounts of the top 5 customers with the highest purchase volumes for 2023 by joining raw_customer_data and transformed_sales_data on customer ID.
 
 *3. What is the average order value for each month in the year 2023?*
 
@@ -90,14 +92,14 @@ We return names and sales amount of top 5 customers with the highest purchase vo
 | 12	      | 281.7575     |
 
 ```sql
-SELECT order_month, AVG(total_sales) as avg_sales
-FROM transformed_sales_data
-WHERE order_year = '2023'
-GROUP BY order_month
-ORDER BY order_month ASC;
+    SELECT order_month, AVG(total_sales) as avg_sales
+    FROM transformed_sales_data
+    WHERE order_year = '2023'
+    GROUP BY order_month
+    ORDER BY order_month ASC;
 ```
 
-We return month numbers and corresponding average sales amounts, summarised based on the month number.
+We return the month numbers and their corresponding average sales amounts, summarized by order_month.
 
 *4. Which customer had the highest order volume in the month of October 2023?*
 
@@ -106,11 +108,11 @@ We return month numbers and corresponding average sales amounts, summarised base
 | x4vcs5xPrM   | 89.31        |
 
 ```sql
-SELECT TOP 1 raw_customer_data.name AS customer_name, SUM(transformed_sales_data.total_sales) AS october_sales 
-FROM transformed_sales_data
-INNER JOIN raw_customer_data ON transformed_sales_data.CUSTOMER_ID = raw_customer_data.id
-WHERE order_year = '2023' AND order_month = '10'
-GROUP BY name
+    SELECT TOP 1 raw_customer_data.name AS customer_name, SUM(transformed_sales_data.total_sales) AS october_sales 
+    FROM transformed_sales_data
+    INNER JOIN raw_customer_data ON transformed_sales_data.CUSTOMER_ID = raw_customer_data.id
+    WHERE order_year = '2023' AND order_month = '10'
+    GROUP BY name
 ```
 
-We return the customer name with the highest total urchase amount in October by joining transformed_sales_data and raw_customer_data on customer ID and summarising total_sales based on the customer name.
+We return the customer name with the highest total purchase amount in October by joining transformed_sales_data and raw_customer_data on customer ID and summarizing total sales by customer_name.
