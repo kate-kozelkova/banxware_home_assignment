@@ -13,7 +13,5 @@ dbt debug
 ```sql
 dbt run
 ```
-6. Run the queries using the provided .sql files in the queries/ folder, e.g.
-```sql
-snowsql -f queries/query_1.sql
-```
+6. Verify Results
+Check your Snowflake database to verify that queries have been executed.
