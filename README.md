@@ -1,5 +1,6 @@
 # Data Engineering Home Assignment
-The project includes maintenance of the Snowflake setup, data upload and transformation, and SQL queries answering the questions.
+The project involves maintaining the Snowflake setup, uploading and transforming data, and executing SQL queries to answer specific questions.
+In order to execute the project, please follow the instructions below.
 
 ## Installation and usage
 1. Log into your Snowflake account.
